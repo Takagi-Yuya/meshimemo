@@ -1,0 +1,45 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isHouseholdMember(householdId) {
+      return isAuthenticated() &&
+        exists(/databases/$(database)/documents/households/$(householdId)) &&
+        request.auth.uid in get(/databases/$(database)/documents/households/$(householdId)).data.members;
+    }
+
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      allow update: if isAuthenticated() && request.auth.uid == userId;
+    }
+
+    match /households/{householdId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update: if isHouseholdMember(householdId);
+    }
+
+    match /recipes/{recipeId} {
+      allow read: if isAuthenticated() && isHouseholdMember(resource.data.householdId);
+      allow create: if isAuthenticated() && isHouseholdMember(request.resource.data.householdId);
+      allow update, delete: if isAuthenticated() && isHouseholdMember(resource.data.householdId);
+    }
+
+    match /cookLogs/{logId} {
+      allow read: if isAuthenticated() && isHouseholdMember(resource.data.householdId);
+      allow create: if isAuthenticated() && isHouseholdMember(request.resource.data.householdId);
+    }
+
+    match /wantToEat/{id} {
+      allow read: if isAuthenticated() && isHouseholdMember(resource.data.householdId);
+      allow create: if isAuthenticated() && isHouseholdMember(request.resource.data.householdId);
+      allow delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+  }
+}
