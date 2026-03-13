@@ -1,73 +1,77 @@
-# React + TypeScript + Vite
+# MESHIMEMO（メシメモ）
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+SNSで見つけたレシピを保存して、自分だけのジャンル別メニュー表を育てるアプリ。
 
-Currently, two official plugins are available:
+「今日なに作ろう？」「何食べたい？」をサクッと解決します。
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## どんなアプリ？
 
-## React Compiler
+1. **レシピを保存** - URLを貼るだけ。メモや写真も追加できる
+2. **メニュー表になる** - 料理・パン・お菓子・ハンドメイドのジャンル別に自動整理
+3. **「今日なに作る？」** - 登録したレシピからランダム提案。最近作ってないものを優先
+4. **作ったら記録** - 写真とメモで「作った！」を残す。カレンダーで振り返り
+5. **夫婦で共有** - パートナーを招待して一緒に使える
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 画面イメージ
 
-## Expanding the ESLint configuration
+| ホーム（メニュー表） | レシピ登録 | 今日なに作る？ | カレンダー |
+|:---:|:---:|:---:|:---:|
+| ジャンル別タブで一覧 | タイトル・URL・写真を入力 | ランダムで1品提案 | 作った日にサムネ表示 |
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 技術スタック
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- **フロントエンド**: React + TypeScript（Vite）
+- **UI**: Tailwind CSS
+- **バックエンド**: Firebase（サーバーなし）
+  - Authentication（Googleログイン）
+  - Cloud Firestore（データベース）
+  - Cloud Storage（写真保存）
+  - Hosting（公開）
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## セットアップ
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 1. Firebase プロジェクトを作成
+
+[Firebase Console](https://console.firebase.google.com/) で以下を有効化:
+
+- Authentication → Google プロバイダ
+- Cloud Firestore（asia-northeast1）
+- Cloud Storage
+- Hosting
+
+### 2. 環境変数を設定
+
+```bash
+cp .env.example .env
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+`.env` に Firebase コンソールから取得した設定値を入力:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+VITE_FIREBASE_API_KEY=your-api-key
+VITE_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your-project-id
+VITE_FIREBASE_STORAGE_BUCKET=your-project.firebasestorage.app
+VITE_FIREBASE_MESSAGING_SENDER_ID=123456789
+VITE_FIREBASE_APP_ID=1:123456789:web:abc123
+```
+
+### 3. 起動
+
+```bash
+nvm use 22
+npm install
+npm run dev
+```
+
+### 4. デプロイ
+
+```bash
+npm run build
+npx firebase deploy
+```
+
+## セキュリティルール
+
+Firestore・Storage のルールは同梱済み（`firestore.rules`, `storage.rules`）。
+同じ世帯のメンバーだけがデータを読み書きできるようになっています。
