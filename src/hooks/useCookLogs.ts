@@ -6,6 +6,9 @@ import {
   orderBy,
   onSnapshot,
   addDoc,
+  deleteDoc,
+  updateDoc,
+  doc,
   Timestamp,
 } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
@@ -62,5 +65,21 @@ export function useCookLogs(householdId: string | null) {
     [],
   )
 
-  return { cookLogs, loading, addCookLog }
+  const deleteCookLog = useCallback(async (logId: string) => {
+    await deleteDoc(doc(db, 'cookLogs', logId))
+  }, [])
+
+  const updateCookLog = useCallback(
+    async (logId: string, data: { memo?: string; cookedDate?: string }) => {
+      const updates: Record<string, unknown> = {}
+      if (data.memo !== undefined) updates.memo = data.memo
+      if (data.cookedDate) {
+        updates.cookedAt = Timestamp.fromDate(new Date(data.cookedDate + 'T12:00:00'))
+      }
+      await updateDoc(doc(db, 'cookLogs', logId), updates)
+    },
+    [],
+  )
+
+  return { cookLogs, loading, addCookLog, deleteCookLog, updateCookLog }
 }

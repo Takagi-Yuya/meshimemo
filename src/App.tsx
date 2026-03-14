@@ -18,7 +18,7 @@ function AppContent() {
     useHousehold(user?.householdId ?? null)
   const { recipes, loading: recipesLoading, addRecipe, updateRecipe, deleteRecipe, markCooked } =
     useRecipes(user?.householdId ?? null)
-  const { cookLogs, addCookLog } = useCookLogs(user?.householdId ?? null)
+  const { cookLogs, addCookLog, deleteCookLog, updateCookLog } = useCookLogs(user?.householdId ?? null)
 
   if (authLoading) {
     return (
@@ -71,6 +71,8 @@ function AppContent() {
               deleteRecipe={deleteRecipe}
               markCooked={markCooked}
               addCookLog={addCookLog}
+              deleteCookLog={deleteCookLog}
+              updateCookLog={updateCookLog}
             />
           }
         />

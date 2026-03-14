@@ -23,6 +23,8 @@ interface Props {
     memo: string
     cookedDate?: string
   }) => Promise<{ id: string; cookedAt: import('firebase/firestore').Timestamp }>
+  deleteCookLog: (logId: string) => Promise<void>
+  updateCookLog: (logId: string, data: { memo?: string; cookedDate?: string }) => Promise<void>
 }
 
 export function RecipeDetail({
@@ -33,6 +35,8 @@ export function RecipeDetail({
   deleteRecipe,
   markCooked,
   addCookLog,
+  deleteCookLog,
+  updateCookLog,
 }: Props) {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -239,7 +243,7 @@ export function RecipeDetail({
       )}
 
       {/* 作った履歴 */}
-      <CookLogList logs={recipeLogs} />
+      <CookLogList logs={recipeLogs} onDelete={deleteCookLog} onUpdate={updateCookLog} />
     </div>
   )
 }
