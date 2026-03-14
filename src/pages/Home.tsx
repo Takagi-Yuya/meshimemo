@@ -6,6 +6,13 @@ import type { Recipe, Genre, SubGenre } from '@/types'
 import { GENRE_LABELS, SUB_GENRE_LABELS } from '@/types'
 import { cn } from '@/lib/utils'
 
+const GENRE_EMOJI: Record<string, string> = {
+  cooking: '🍳',
+  bread: '🍞',
+  sweets: '🍰',
+  handmade: '🧶',
+}
+
 interface Props {
   recipes: Recipe[]
   loading: boolean
@@ -52,15 +59,15 @@ export function Home({ recipes, loading }: Props) {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500" />
+        <div className="animate-spin rounded-full h-10 w-10 border-4 border-primary-200 border-t-primary-500" />
       </div>
     )
   }
 
   return (
-    <div className="max-w-lg mx-auto px-4 pb-20">
-      {/* ジャンルタブ */}
-      <div className="flex gap-1 py-3 overflow-x-auto">
+    <div className="max-w-lg mx-auto px-4 pb-24">
+      {/* Genre tabs */}
+      <div className="flex gap-2 py-4 overflow-x-auto scrollbar-hide">
         {(Object.entries(GENRE_LABELS) as [Genre, string][]).map(([key, label]) => (
           <button
             key={key}
@@ -70,25 +77,27 @@ export function Home({ recipes, loading }: Props) {
               setSelectedTag(null)
             }}
             className={cn(
-              'px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors',
+              'px-5 py-2.5 rounded-2xl text-sm font-bold whitespace-nowrap transition-all duration-200 shadow-sm',
               genre === key
-                ? 'bg-primary-500 text-white'
-                : 'bg-white text-gray-600 hover:bg-gray-100',
+                ? 'gradient-warm text-white shadow-warm scale-105'
+                : 'bg-white/80 text-gray-500 hover:bg-white hover:shadow-card hover:scale-105',
             )}
           >
-            {label}
+            {GENRE_EMOJI[key]} {label}
           </button>
         ))}
       </div>
 
-      {/* サブジャンル（料理の場合） */}
+      {/* Sub-genre (cooking only) */}
       {genre === 'cooking' && (
-        <div className="flex gap-1 pb-2 overflow-x-auto">
+        <div className="flex gap-1.5 pb-3 overflow-x-auto scrollbar-hide">
           <button
             onClick={() => setSubGenre(null)}
             className={cn(
-              'px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-colors',
-              !subGenre ? 'bg-primary-200 text-primary-800' : 'bg-gray-100 text-gray-500',
+              'px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-200',
+              !subGenre
+                ? 'bg-gradient-to-r from-primary-200 to-rose-200 text-primary-800 shadow-sm'
+                : 'bg-white/60 text-gray-400 hover:bg-white/80',
             )}
           >
             すべて
@@ -99,10 +108,10 @@ export function Home({ recipes, loading }: Props) {
                 key={key}
                 onClick={() => setSubGenre(key)}
                 className={cn(
-                  'px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-colors',
+                  'px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-200',
                   subGenre === key
-                    ? 'bg-primary-200 text-primary-800'
-                    : 'bg-gray-100 text-gray-500',
+                    ? 'bg-gradient-to-r from-primary-200 to-rose-200 text-primary-800 shadow-sm'
+                    : 'bg-white/60 text-gray-400 hover:bg-white/80',
                 )}
               >
                 {label}
@@ -112,30 +121,30 @@ export function Home({ recipes, loading }: Props) {
         </div>
       )}
 
-      {/* 検索 */}
-      <div className="relative mb-3">
-        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+      {/* Search */}
+      <div className="relative mb-4">
+        <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-primary-300" />
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="レシピを検索..."
-          className="w-full pl-9 pr-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+          className="w-full pl-10 pr-4 py-2.5 bg-white/80 backdrop-blur-sm border border-white/60 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 focus:bg-white shadow-sm transition-all duration-200 placeholder:text-gray-300"
         />
       </div>
 
-      {/* タグフィルタ */}
+      {/* Tag filter */}
       {allTags.length > 0 && (
-        <div className="flex gap-1 pb-3 overflow-x-auto">
+        <div className="flex gap-1.5 pb-4 overflow-x-auto scrollbar-hide">
           {allTags.map((tag) => (
             <button
               key={tag}
               onClick={() => setSelectedTag(selectedTag === tag ? null : tag)}
               className={cn(
-                'px-2 py-1 rounded-full text-xs whitespace-nowrap transition-colors',
+                'px-3 py-1 rounded-full text-xs whitespace-nowrap transition-all duration-200 font-medium',
                 selectedTag === tag
-                  ? 'bg-primary-100 text-primary-700'
-                  : 'bg-gray-50 text-gray-400 hover:bg-gray-100',
+                  ? 'bg-gradient-to-r from-primary-100 to-rose-100 text-primary-600 shadow-sm'
+                  : 'bg-white/50 text-gray-400 hover:bg-white/70 hover:text-primary-400',
               )}
             >
               #{tag}
@@ -144,14 +153,15 @@ export function Home({ recipes, loading }: Props) {
         </div>
       )}
 
-      {/* レシピ一覧 */}
+      {/* Recipe grid */}
       {filteredRecipes.length === 0 ? (
-        <div className="text-center py-16 text-gray-400">
-          <p className="text-lg mb-2">まだレシピがありません</p>
-          <p className="text-sm">右下の＋ボタンから登録しましょう</p>
+        <div className="text-center py-20">
+          <div className="text-5xl mb-4 animate-float">🍳</div>
+          <p className="text-lg mb-2 text-gray-400 font-medium">まだレシピがありません</p>
+          <p className="text-sm text-gray-300">右下の＋ボタンから登録しましょう</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-4">
           {filteredRecipes.map((recipe) => (
             <RecipeCard key={recipe.id} recipe={recipe} />
           ))}
@@ -161,9 +171,9 @@ export function Home({ recipes, loading }: Props) {
       {/* FAB */}
       <Link
         to="/recipe/new"
-        className="fixed bottom-6 right-6 w-14 h-14 bg-primary-500 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-primary-600 transition-colors"
+        className="fixed bottom-6 right-6 w-16 h-16 gradient-warm text-white rounded-full shadow-warm-lg flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-200"
       >
-        <Plus size={24} />
+        <Plus size={28} strokeWidth={2.5} />
       </Link>
     </div>
   )

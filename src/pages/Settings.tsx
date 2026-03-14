@@ -54,93 +54,102 @@ export function Settings({
   }
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-6 space-y-6">
-      <h2 className="text-lg font-bold">設定</h2>
+    <div className="max-w-lg mx-auto px-4 py-8 space-y-6">
+      <div className="flex items-center gap-2">
+        <span className="text-2xl">⚙️</span>
+        <h2 className="text-xl font-bold text-gradient-warm">設定</h2>
+      </div>
 
-      {/* プロフィール */}
-      <div className="bg-white rounded-xl p-4 border border-gray-100">
-        <h3 className="text-sm font-bold text-gray-700 mb-3">プロフィール</h3>
-        <div className="flex items-center gap-3">
+      {/* Profile */}
+      <div className="glass-card rounded-3xl p-5 border border-white/50 shadow-card">
+        <h3 className="text-sm font-bold text-gray-500 mb-4 flex items-center gap-1.5">
+          <span>👤</span> プロフィール
+        </h3>
+        <div className="flex items-center gap-4">
           {user.photoURL ? (
             <img
               src={user.photoURL}
               alt=""
-              className="w-10 h-10 rounded-full"
+              className="w-12 h-12 rounded-full ring-2 ring-primary-200 ring-offset-2 shadow-sm"
             />
           ) : (
-            <div className="w-10 h-10 rounded-full bg-primary-200 flex items-center justify-center text-primary-700 font-bold">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary-300 to-rose-300 flex items-center justify-center text-white font-bold text-lg shadow-warm ring-2 ring-white">
               {user.name[0]}
             </div>
           )}
           <div>
-            <p className="font-medium text-sm">{user.name}</p>
+            <p className="font-bold text-gray-800">{user.name}</p>
           </div>
         </div>
       </div>
 
-      {/* 世帯管理 */}
-      <div className="bg-white rounded-xl p-4 border border-gray-100">
-        <h3 className="text-sm font-bold text-gray-700 mb-3">世帯</h3>
+      {/* Household */}
+      <div className="glass-card rounded-3xl p-5 border border-white/50 shadow-card">
+        <h3 className="text-sm font-bold text-gray-500 mb-4 flex items-center gap-1.5">
+          <span>🏠</span> 世帯
+        </h3>
 
         {household ? (
-          <div className="space-y-3">
+          <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <p className="text-sm font-medium">{household.name}</p>
-              <span className="text-xs text-gray-400">
+              <p className="font-bold text-gray-800">{household.name}</p>
+              <span className="text-xs bg-gradient-to-r from-primary-100 to-rose-100 text-primary-600 px-3 py-1 rounded-full font-bold">
                 {household.members.length}人
               </span>
             </div>
 
-            <div>
-              <p className="text-xs text-gray-500 mb-1">招待コード</p>
+            <div className="bg-cream-50 rounded-2xl p-4">
+              <p className="text-xs text-gray-500 mb-2 font-medium">📋 招待コード</p>
               <div className="flex items-center gap-2">
-                <code className="flex-1 text-xs bg-gray-50 px-3 py-2 rounded-lg font-mono truncate">
+                <code className="flex-1 text-xs bg-white/80 px-4 py-2.5 rounded-xl font-mono truncate text-gray-600 border border-white/60">
                   {household.id}
                 </code>
                 <button
                   onClick={copyInviteCode}
-                  className="p-2 hover:bg-gray-100 rounded-lg"
+                  className="p-2.5 hover:bg-white/60 rounded-xl transition-all duration-200"
                 >
                   {copied ? (
-                    <Check size={16} className="text-green-500" />
+                    <Check size={18} className="text-green-500" />
                   ) : (
-                    <Copy size={16} className="text-gray-400" />
+                    <Copy size={18} className="text-primary-400" />
                   )}
                 </button>
               </div>
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-xs text-gray-400 mt-2 leading-relaxed">
                 パートナーにこのコードを共有して参加してもらいましょう
               </p>
             </div>
           </div>
         ) : (
-          <div className="space-y-4">
-            {/* 世帯作成 */}
+          <div className="space-y-5">
+            {/* Create household */}
             <div>
-              <p className="text-sm text-gray-600 mb-2">世帯を作成</p>
+              <p className="text-sm text-gray-600 mb-2 font-medium">🏠 世帯を作成</p>
               <div className="flex gap-2">
                 <input
                   type="text"
                   value={householdName}
                   onChange={(e) => setHouseholdName(e.target.value)}
                   placeholder="例: 高木家"
-                  className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="flex-1 border border-white/60 bg-white/60 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 focus:bg-white transition-all duration-200 placeholder:text-gray-300"
                 />
                 <button
                   onClick={handleCreate}
                   disabled={creating}
-                  className="px-4 py-2 bg-primary-500 text-white rounded-lg text-sm font-medium hover:bg-primary-600 disabled:opacity-50"
+                  className="px-5 py-2.5 gradient-warm text-white rounded-xl text-sm font-bold hover:shadow-warm transition-all duration-200 disabled:opacity-50"
                 >
                   作成
                 </button>
               </div>
             </div>
 
-            <div className="text-center text-xs text-gray-400">または</div>
+            <div className="text-center">
+              <span className="text-xs text-gray-300 bg-white/40 px-4 py-1 rounded-full">または</span>
+            </div>
 
-            {/* 世帯参加 */}
+            {/* Join household */}
             <div>
-              <p className="text-sm text-gray-600 mb-2">招待コードで参加</p>
+              <p className="text-sm text-gray-600 mb-2 font-medium">🤝 招待コードで参加</p>
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -150,28 +159,28 @@ export function Settings({
                     setJoinError('')
                   }}
                   placeholder="招待コードを入力"
-                  className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="flex-1 border border-white/60 bg-white/60 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 focus:bg-white transition-all duration-200 placeholder:text-gray-300"
                 />
                 <button
                   onClick={handleJoin}
                   disabled={joining}
-                  className="px-4 py-2 bg-gray-700 text-white rounded-lg text-sm font-medium hover:bg-gray-800 disabled:opacity-50"
+                  className="px-4 py-2.5 bg-gradient-to-r from-gray-700 to-gray-800 text-white rounded-xl text-sm font-bold hover:shadow-lg transition-all duration-200 disabled:opacity-50"
                 >
-                  <UserPlus size={16} />
+                  <UserPlus size={18} />
                 </button>
               </div>
               {joinError && (
-                <p className="text-xs text-red-500 mt-1">{joinError}</p>
+                <p className="text-xs text-red-500 mt-2 font-medium">{joinError}</p>
               )}
             </div>
           </div>
         )}
       </div>
 
-      {/* ログアウト */}
+      {/* Logout */}
       <button
         onClick={onLogout}
-        className="flex items-center gap-2 text-sm text-gray-500 hover:text-red-500 transition-colors"
+        className="flex items-center gap-2 text-sm text-gray-400 hover:text-red-400 transition-all duration-200 bg-white/40 px-5 py-3 rounded-2xl hover:bg-white/60"
       >
         <LogOut size={16} />
         ログアウト

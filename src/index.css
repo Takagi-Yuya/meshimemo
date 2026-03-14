@@ -4,7 +4,47 @@
 
 @layer base {
   body {
-    @apply bg-orange-50 text-gray-900 antialiased;
+    @apply text-gray-900 antialiased;
     margin: 0;
+    background: linear-gradient(135deg, #fff8f5 0%, #ffe8d6 30%, #fff1f2 60%, #fff8ed 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+  .gradient-warm {
+    background: linear-gradient(135deg, #f97335, #fb7185);
+  }
+
+  .gradient-warm-light {
+    background: linear-gradient(135deg, #fff5f0, #fff1f2, #fff8ed);
+  }
+
+  .gradient-warm-soft {
+    background: linear-gradient(135deg, #ffe8d6, #fecdd3);
+  }
+
+  .text-gradient-warm {
+    background: linear-gradient(135deg, #f97335, #fb7185);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }
