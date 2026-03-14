@@ -6,7 +6,7 @@ import type { CookLog } from '@/types'
 
 interface Props {
   logs: CookLog[]
-  onDelete: (logId: string) => Promise<void>
+  onDelete: (logId: string, recipeId: string) => Promise<void>
   onUpdate: (logId: string, data: { memo?: string; cookedDate?: string }) => Promise<void>
 }
 
@@ -34,7 +34,9 @@ export function CookLogList({ logs, onDelete, onUpdate }: Props) {
 
   const handleDelete = async (logId: string) => {
     if (!confirm('この記録を削除しますか？')) return
-    await onDelete(logId)
+    const log = logs.find((l) => l.id === logId)
+    if (!log) return
+    await onDelete(logId, log.recipeId)
   }
 
   return (

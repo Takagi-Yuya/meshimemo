@@ -9,7 +9,9 @@ import {
   deleteDoc,
   updateDoc,
   doc,
+  increment,
   Timestamp,
+  serverTimestamp,
 } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import type { CookLog } from '@/types'
@@ -65,8 +67,12 @@ export function useCookLogs(householdId: string | null) {
     [],
   )
 
-  const deleteCookLog = useCallback(async (logId: string) => {
+  const deleteCookLog = useCallback(async (logId: string, recipeId: string) => {
     await deleteDoc(doc(db, 'cookLogs', logId))
+    await updateDoc(doc(db, 'recipes', recipeId), {
+      cookCount: increment(-1),
+      updatedAt: serverTimestamp(),
+    })
   }, [])
 
   const updateCookLog = useCallback(

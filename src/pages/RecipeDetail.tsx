@@ -23,7 +23,7 @@ interface Props {
     memo: string
     cookedDate?: string
   }) => Promise<{ id: string; cookedAt: import('firebase/firestore').Timestamp }>
-  deleteCookLog: (logId: string) => Promise<void>
+  deleteCookLog: (logId: string, recipeId: string) => Promise<void>
   updateCookLog: (logId: string, data: { memo?: string; cookedDate?: string }) => Promise<void>
 }
 
