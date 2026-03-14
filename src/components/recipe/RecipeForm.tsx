@@ -11,15 +11,17 @@ export interface RecipeFormData {
   memo: string
   tags: string[]
   photoFiles: File[]
+  existingPhotos: string[]
 }
 
 interface Props {
   initial?: Partial<RecipeFormData>
+  existingPhotos?: string[]
   onSubmit: (data: RecipeFormData) => Promise<void>
   submitLabel?: string
 }
 
-export function RecipeForm({ initial, onSubmit, submitLabel = '登録する' }: Props) {
+export function RecipeForm({ initial, existingPhotos: existingPhotosProp, onSubmit, submitLabel = '登録する' }: Props) {
   const [title, setTitle] = useState(initial?.title ?? '')
   const [genre, setGenre] = useState<Genre>(initial?.genre ?? 'cooking')
   const [subGenre, setSubGenre] = useState<SubGenre | null>(initial?.subGenre ?? null)
@@ -29,6 +31,7 @@ export function RecipeForm({ initial, onSubmit, submitLabel = '登録する' }: 
   const [tagInput, setTagInput] = useState('')
   const [photoFiles, setPhotoFiles] = useState<File[]>(initial?.photoFiles ?? [])
   const [photoPreviews, setPhotoPreviews] = useState<string[]>([])
+  const [existingPhotos, setExistingPhotos] = useState<string[]>(existingPhotosProp ?? [])
   const [submitting, setSubmitting] = useState(false)
 
   const addTag = () => {
@@ -60,13 +63,17 @@ export function RecipeForm({ initial, onSubmit, submitLabel = '登録する' }: 
     setPhotoPreviews((prev) => prev.filter((_, i) => i !== index))
   }
 
+  const removeExistingPhoto = (index: number) => {
+    setExistingPhotos((prev) => prev.filter((_, i) => i !== index))
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!title.trim()) return
 
     setSubmitting(true)
     try {
-      await onSubmit({ title, genre, subGenre, url, memo, tags, photoFiles })
+      await onSubmit({ title, genre, subGenre, url, memo, tags, photoFiles, existingPhotos })
     } finally {
       setSubmitting(false)
     }
@@ -101,7 +108,7 @@ export function RecipeForm({ initial, onSubmit, submitLabel = '登録する' }: 
               type="button"
               onClick={() => {
                 setGenre(key)
-                if (key !== 'cooking') setSubGenre(null)
+                if (key !== 'cooking' && key !== 'eating_out') setSubGenre(null)
               }}
               className={`py-2 px-3 rounded-lg text-sm font-medium transition-colors ${
                 genre === key
@@ -115,8 +122,8 @@ export function RecipeForm({ initial, onSubmit, submitLabel = '登録する' }: 
         </div>
       </div>
 
-      {/* サブジャンル（料理の場合のみ） */}
-      {genre === 'cooking' && (
+      {/* サブジャンル（料理・外食の場合） */}
+      {(genre === 'cooking' || genre === 'eating_out') && (
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             サブジャンル
@@ -212,6 +219,22 @@ export function RecipeForm({ initial, onSubmit, submitLabel = '登録する' }: 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">写真</label>
         <div className="flex gap-2 flex-wrap">
+          {existingPhotos.map((photo, i) => (
+            <div key={`existing-${i}`} className="relative w-20 h-20">
+              <img
+                src={photo}
+                alt=""
+                className="w-full h-full object-cover rounded-lg"
+              />
+              <button
+                type="button"
+                onClick={() => removeExistingPhoto(i)}
+                className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
+              >
+                <X size={12} />
+              </button>
+            </div>
+          ))}
           {photoPreviews.map((preview, i) => (
             <div key={i} className="relative w-20 h-20">
               <img

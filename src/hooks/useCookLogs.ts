@@ -47,10 +47,14 @@ export function useCookLogs(householdId: string | null) {
       cookedBy: string
       photos: string[]
       memo: string
+      cookedDate?: string
     }): Promise<{ id: string; cookedAt: Timestamp }> => {
-      const cookedAt = Timestamp.now()
+      const { cookedDate, ...rest } = data
+      const cookedAt = cookedDate
+        ? Timestamp.fromDate(new Date(cookedDate + 'T12:00:00'))
+        : Timestamp.now()
       const docRef = await addDoc(collection(db, 'cookLogs'), {
-        ...data,
+        ...rest,
         cookedAt,
       })
       return { id: docRef.id, cookedAt }

@@ -10,7 +10,7 @@ const GENRE_EMOJI: Record<string, string> = {
   cooking: '🍳',
   bread: '🍞',
   sweets: '🍰',
-  handmade: '🧶',
+  eating_out: '🍽️',
 }
 
 interface Props {
@@ -88,8 +88,8 @@ export function Home({ recipes, loading }: Props) {
         ))}
       </div>
 
-      {/* Sub-genre (cooking only) */}
-      {genre === 'cooking' && (
+      {/* Sub-genre (cooking / eating_out) */}
+      {(genre === 'cooking' || genre === 'eating_out') && (
         <div className="flex gap-1.5 pb-3 overflow-x-auto scrollbar-hide">
           <button
             onClick={() => setSubGenre(null)}

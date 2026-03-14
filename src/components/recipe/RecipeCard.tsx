@@ -7,7 +7,7 @@ const GENRE_EMOJI: Record<string, string> = {
   cooking: '🍳',
   bread: '🍞',
   sweets: '🍰',
-  handmade: '🧶',
+  eating_out: '🍽️',
 }
 
 interface Props {

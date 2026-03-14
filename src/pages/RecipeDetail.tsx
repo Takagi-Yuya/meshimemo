@@ -21,6 +21,7 @@ interface Props {
     cookedBy: string
     photos: string[]
     memo: string
+    cookedDate?: string
   }) => Promise<{ id: string; cookedAt: import('firebase/firestore').Timestamp }>
 }
 
@@ -53,7 +54,7 @@ export function RecipeDetail({
     )
   }
 
-  const handleCookLog = async (data: { memo: string; photoFiles: File[] }) => {
+  const handleCookLog = async (data: { memo: string; photoFiles: File[]; cookedDate: string }) => {
     let photos: string[] = []
     if (data.photoFiles.length > 0) {
       photos = await uploadPhotos(
@@ -68,6 +69,7 @@ export function RecipeDetail({
       cookedBy: user.id,
       photos,
       memo: data.memo,
+      cookedDate: data.cookedDate,
     })
 
     await markCooked(recipe.id, cookedAt)
@@ -75,7 +77,7 @@ export function RecipeDetail({
   }
 
   const handleEdit = async (data: RecipeFormData) => {
-    let photos = recipe.photos
+    let photos = data.existingPhotos
     if (data.photoFiles.length > 0) {
       const newPhotos = await uploadPhotos(
         data.photoFiles,
@@ -123,6 +125,7 @@ export function RecipeDetail({
             memo: recipe.memo,
             tags: recipe.tags,
           }}
+          existingPhotos={recipe.photos}
           onSubmit={handleEdit}
           submitLabel="更新する"
         />

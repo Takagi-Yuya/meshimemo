@@ -1,13 +1,13 @@
 import type { Timestamp } from 'firebase/firestore'
 
-export type Genre = 'cooking' | 'bread' | 'sweets' | 'handmade'
+export type Genre = 'cooking' | 'bread' | 'sweets' | 'eating_out'
 export type SubGenre = 'japanese' | 'western' | 'chinese' | 'other'
 
 export const GENRE_LABELS: Record<Genre, string> = {
   cooking: '料理',
   bread: 'パン',
   sweets: 'お菓子',
-  handmade: 'ハンドメイド',
+  eating_out: '外食',
 }
 
 export const SUB_GENRE_LABELS: Record<SubGenre, string> = {

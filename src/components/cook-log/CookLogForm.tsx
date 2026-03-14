@@ -2,12 +2,18 @@ import { useState } from 'react'
 import { Camera, X } from 'lucide-react'
 
 interface Props {
-  onSubmit: (data: { memo: string; photoFiles: File[] }) => Promise<void>
+  onSubmit: (data: { memo: string; photoFiles: File[]; cookedDate: string }) => Promise<void>
   onCancel: () => void
+}
+
+function todayString() {
+  const d = new Date()
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
 export function CookLogForm({ onSubmit, onCancel }: Props) {
   const [memo, setMemo] = useState('')
+  const [cookedDate, setCookedDate] = useState(todayString())
   const [photoFiles, setPhotoFiles] = useState<File[]>([])
   const [photoPreviews, setPhotoPreviews] = useState<string[]>([])
   const [submitting, setSubmitting] = useState(false)
@@ -33,7 +39,7 @@ export function CookLogForm({ onSubmit, onCancel }: Props) {
     e.preventDefault()
     setSubmitting(true)
     try {
-      await onSubmit({ memo, photoFiles })
+      await onSubmit({ memo, photoFiles, cookedDate })
     } finally {
       setSubmitting(false)
     }
@@ -42,6 +48,17 @@ export function CookLogForm({ onSubmit, onCancel }: Props) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4 bg-white rounded-xl p-4 border border-gray-200">
       <h3 className="font-bold text-sm">🎉 作った記録</h3>
+
+      {/* 日付 */}
+      <div>
+        <label className="block text-xs font-medium text-gray-600 mb-1">作った日</label>
+        <input
+          type="date"
+          value={cookedDate}
+          onChange={(e) => setCookedDate(e.target.value)}
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+        />
+      </div>
 
       <div className="flex gap-2 flex-wrap">
         {photoPreviews.map((preview, i) => (
