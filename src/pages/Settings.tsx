@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { LogOut, Copy, UserPlus, Check } from 'lucide-react'
+import { LogOut, Copy, UserPlus, Check, RefreshCw } from 'lucide-react'
 import type { User, Household } from '@/types'
 
 interface Props {
@@ -176,6 +176,21 @@ export function Settings({
           </div>
         )}
       </div>
+
+      {/* Update */}
+      <button
+        onClick={async () => {
+          if ('caches' in window) {
+            const keys = await caches.keys()
+            await Promise.all(keys.map((key) => caches.delete(key)))
+          }
+          window.location.reload()
+        }}
+        className="flex items-center gap-2 text-sm text-gray-400 hover:text-primary-500 transition-all duration-200 bg-white/40 px-5 py-3 rounded-2xl hover:bg-white/60"
+      >
+        <RefreshCw size={16} />
+        最新版に更新
+      </button>
 
       {/* Logout */}
       <button
