@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { Shuffle } from 'lucide-react'
 import type { Recipe, Genre } from '@/types'
@@ -18,11 +18,23 @@ interface Props {
 
 export function Suggestion({ recipes }: Props) {
   const [genre, setGenre] = useState<Genre | 'all'>('all')
+  const [selectedTag, setSelectedTag] = useState<string | null>(null)
   const [suggestion, setSuggestion] = useState<Recipe | null>(null)
   const [animating, setAnimating] = useState(false)
 
+  const allTags = useMemo(() => {
+    const tags = new Set<string>()
+    const target = genre === 'all' ? recipes : recipes.filter((r) => r.genre === genre)
+    target.forEach((r) => r.tags.forEach((t) => tags.add(t)))
+    return Array.from(tags)
+  }, [recipes, genre])
+
   const suggest = useCallback(() => {
     let candidates = genre === 'all' ? recipes : recipes.filter((r) => r.genre === genre)
+
+    if (selectedTag) {
+      candidates = candidates.filter((r) => r.tags.includes(selectedTag))
+    }
 
     if (candidates.length === 0) {
       setSuggestion(null)
@@ -45,7 +57,7 @@ export function Suggestion({ recipes }: Props) {
       setSuggestion(pick)
       setAnimating(false)
     }, 400)
-  }, [recipes, genre])
+  }, [recipes, genre, selectedTag])
 
   return (
     <div className="max-w-lg mx-auto px-4 py-8">
@@ -58,7 +70,7 @@ export function Suggestion({ recipes }: Props) {
       {/* Genre filter */}
       <div className="flex gap-2 justify-center mb-8 flex-wrap">
         <button
-          onClick={() => setGenre('all')}
+          onClick={() => { setGenre('all'); setSelectedTag(null) }}
           className={cn(
             'px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-200 shadow-sm',
             genre === 'all'
@@ -71,7 +83,7 @@ export function Suggestion({ recipes }: Props) {
         {(Object.entries(GENRE_LABELS) as [Genre, string][]).map(([key, label]) => (
           <button
             key={key}
-            onClick={() => setGenre(key)}
+            onClick={() => { setGenre(key); setSelectedTag(null) }}
             className={cn(
               'px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-200 shadow-sm',
               genre === key
@@ -83,6 +95,26 @@ export function Suggestion({ recipes }: Props) {
           </button>
         ))}
       </div>
+
+      {/* Tag filter */}
+      {allTags.length > 0 && (
+        <div className="flex gap-1.5 justify-center mb-6 flex-wrap">
+          {allTags.map((tag) => (
+            <button
+              key={tag}
+              onClick={() => setSelectedTag(selectedTag === tag ? null : tag)}
+              className={cn(
+                'px-3 py-1 rounded-full text-xs whitespace-nowrap transition-all duration-200 font-medium',
+                selectedTag === tag
+                  ? 'bg-gradient-to-r from-primary-100 to-rose-100 text-primary-600 shadow-sm'
+                  : 'bg-white/50 text-gray-400 hover:bg-white/70 hover:text-primary-400',
+              )}
+            >
+              #{tag}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Suggest button */}
       <div className="text-center mb-10">
