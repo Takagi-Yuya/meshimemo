@@ -56,7 +56,7 @@ export function RecipeNew({ user, recipes, addRecipe }: Props) {
   }
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-4">
+    <div className="max-w-2xl mx-auto px-4 py-4">
       <button
         onClick={() => navigate(-1)}
         className="flex items-center gap-1 text-gray-500 mb-4 hover:text-gray-700"

@@ -58,7 +58,7 @@ export function RecipeDetail({
 
   if (!recipe) {
     return (
-      <div className="max-w-lg mx-auto px-4 py-8 text-center text-gray-400">
+      <div className="max-w-2xl mx-auto px-4 py-8 text-center text-gray-400">
         レシピが見つかりません
       </div>
     )
@@ -117,7 +117,7 @@ export function RecipeDetail({
 
   if (editing) {
     return (
-      <div className="max-w-lg mx-auto px-4 py-4">
+      <div className="max-w-2xl mx-auto px-4 py-4">
         <button
           onClick={() => setEditing(false)}
           className="flex items-center gap-1 text-gray-500 mb-4"
@@ -145,7 +145,7 @@ export function RecipeDetail({
   }
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-4 pb-20">
+    <div className="max-w-2xl mx-auto px-4 py-4 pb-20">
       <button
         onClick={() => navigate(-1)}
         className="flex items-center gap-1 text-gray-500 mb-4 hover:text-gray-700"

@@ -14,7 +14,7 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50">
       <div className="gradient-warm shadow-warm">
-        <div className="max-w-lg mx-auto px-4">
+        <div className="max-w-4xl mx-auto px-4">
           <div className="flex items-center justify-between h-14">
             <Link to="/" className="text-xl font-bold text-white drop-shadow-sm flex items-center gap-1.5">
               <span className="text-2xl">🍳</span>
@@ -24,7 +24,7 @@ export function Header() {
         </div>
       </div>
       <nav className="glass-card border-b border-white/30 shadow-sm">
-        <div className="max-w-lg mx-auto px-2">
+        <div className="max-w-4xl mx-auto px-2">
           <div className="flex">
             {NAV_ITEMS.map(({ path, label, emoji }) => (
               <Link

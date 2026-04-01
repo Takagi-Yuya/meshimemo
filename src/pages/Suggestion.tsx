@@ -60,7 +60,7 @@ export function Suggestion({ recipes }: Props) {
   }, [recipes, genre, selectedTag])
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-8">
+    <div className="max-w-2xl mx-auto px-4 py-8">
       <div className="text-center mb-6">
         <div className="text-4xl mb-2 animate-bounce-slow">🎲</div>
         <h2 className="text-2xl font-bold text-gradient-warm">今日なに作る？</h2>

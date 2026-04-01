@@ -65,7 +65,7 @@ export function Home({ recipes, loading }: Props) {
   }
 
   return (
-    <div className="max-w-lg mx-auto px-4 pb-24">
+    <div className="max-w-4xl mx-auto px-4 pb-24">
       {/* Genre tabs */}
       <div className="flex gap-2 py-4 overflow-x-auto scrollbar-hide">
         {(Object.entries(GENRE_LABELS) as [Genre, string][]).map(([key, label]) => (
@@ -161,7 +161,7 @@ export function Home({ recipes, loading }: Props) {
           <p className="text-sm text-gray-300">右下の＋ボタンから登録しましょう</p>
         </div>
       ) : (
-        <div className="columns-2 gap-4">
+        <div className="columns-2 md:columns-3 lg:columns-4 gap-4">
           {filteredRecipes.map((recipe) => (
             <RecipeCard key={recipe.id} recipe={recipe} />
           ))}

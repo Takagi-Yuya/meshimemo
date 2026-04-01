@@ -63,7 +63,7 @@ export function Calendar({ cookLogs, recipes }: Props) {
   ]
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-6">
+    <div className="max-w-2xl mx-auto px-4 py-6">
       {/* Month navigation */}
       <div className="flex items-center justify-between mb-5">
         <button

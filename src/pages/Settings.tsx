@@ -54,7 +54,7 @@ export function Settings({
   }
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-8 space-y-6">
+    <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
       <div className="flex items-center gap-2">
         <span className="text-2xl">⚙️</span>
         <h2 className="text-xl font-bold text-gradient-warm">設定</h2>
