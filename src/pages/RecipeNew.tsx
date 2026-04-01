@@ -1,11 +1,13 @@
+import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 import { RecipeForm, type RecipeFormData } from '@/components/recipe/RecipeForm'
 import { usePhotos } from '@/hooks/usePhotos'
-import type { User } from '@/types'
+import type { User, Recipe } from '@/types'
 
 interface Props {
   user: User
+  recipes: Recipe[]
   addRecipe: (data: {
     householdId: string
     title: string
@@ -19,9 +21,15 @@ interface Props {
   }) => Promise<string>
 }
 
-export function RecipeNew({ user, addRecipe }: Props) {
+export function RecipeNew({ user, recipes, addRecipe }: Props) {
   const navigate = useNavigate()
   const { uploadPhotos } = usePhotos()
+
+  const allTags = useMemo(() => {
+    const tags = new Set<string>()
+    recipes.forEach((r) => r.tags.forEach((t) => tags.add(t)))
+    return Array.from(tags).sort()
+  }, [recipes])
 
   const handleSubmit = async (data: RecipeFormData) => {
     let photos: string[] = []
@@ -58,7 +66,7 @@ export function RecipeNew({ user, addRecipe }: Props) {
       </button>
 
       <h2 className="text-lg font-bold mb-4">レシピ登録</h2>
-      <RecipeForm onSubmit={handleSubmit} />
+      <RecipeForm onSubmit={handleSubmit} allTags={allTags} />
     </div>
   )
 }

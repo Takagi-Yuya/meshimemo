@@ -44,6 +44,12 @@ export function RecipeDetail({
   const [showCookForm, setShowCookForm] = useState(false)
   const [editing, setEditing] = useState(false)
 
+  const allTags = useMemo(() => {
+    const tags = new Set<string>()
+    recipes.forEach((r) => r.tags.forEach((t) => tags.add(t)))
+    return Array.from(tags).sort()
+  }, [recipes])
+
   const recipe = recipes.find((r) => r.id === id)
   const recipeLogs = useMemo(
     () => cookLogs.filter((l) => l.recipeId === id),
@@ -130,6 +136,7 @@ export function RecipeDetail({
             tags: recipe.tags,
           }}
           existingPhotos={recipe.photos}
+          allTags={allTags}
           onSubmit={handleEdit}
           submitLabel="更新する"
         />

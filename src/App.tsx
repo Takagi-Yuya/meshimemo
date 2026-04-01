@@ -58,7 +58,7 @@ function AppContent() {
         />
         <Route
           path="/recipe/new"
-          element={<RecipeNew user={user} addRecipe={addRecipe} />}
+          element={<RecipeNew user={user} recipes={recipes} addRecipe={addRecipe} />}
         />
         <Route
           path="/recipe/:id"

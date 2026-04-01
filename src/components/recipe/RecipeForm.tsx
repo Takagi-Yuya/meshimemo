@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo, useRef } from 'react'
 import { X, Plus, Camera } from 'lucide-react'
 import type { Genre, SubGenre } from '@/types'
 import { GENRE_LABELS, SUB_GENRE_LABELS } from '@/types'
@@ -17,11 +17,12 @@ export interface RecipeFormData {
 interface Props {
   initial?: Partial<RecipeFormData>
   existingPhotos?: string[]
+  allTags?: string[]
   onSubmit: (data: RecipeFormData) => Promise<void>
   submitLabel?: string
 }
 
-export function RecipeForm({ initial, existingPhotos: existingPhotosProp, onSubmit, submitLabel = '登録する' }: Props) {
+export function RecipeForm({ initial, existingPhotos: existingPhotosProp, allTags: allTagsProp = [], onSubmit, submitLabel = '登録する' }: Props) {
   const [title, setTitle] = useState(initial?.title ?? '')
   const [genre, setGenre] = useState<Genre>(initial?.genre ?? 'cooking')
   const [subGenre, setSubGenre] = useState<SubGenre | null>(initial?.subGenre ?? null)
@@ -29,17 +30,29 @@ export function RecipeForm({ initial, existingPhotos: existingPhotosProp, onSubm
   const [memo, setMemo] = useState(initial?.memo ?? '')
   const [tags, setTags] = useState<string[]>(initial?.tags ?? [])
   const [tagInput, setTagInput] = useState('')
+  const [showTagSuggestions, setShowTagSuggestions] = useState(false)
+  const tagInputRef = useRef<HTMLInputElement>(null)
+  const suggestionsRef = useRef<HTMLDivElement>(null)
+
+  const tagSuggestions = useMemo(() => {
+    const available = allTagsProp.filter((t) => !tags.includes(t))
+    if (!tagInput.trim()) return available
+    const q = tagInput.toLowerCase()
+    return available.filter((t) => t.toLowerCase().includes(q))
+  }, [allTagsProp, tags, tagInput])
+
   const [photoFiles, setPhotoFiles] = useState<File[]>(initial?.photoFiles ?? [])
   const [photoPreviews, setPhotoPreviews] = useState<string[]>([])
   const [existingPhotos, setExistingPhotos] = useState<string[]>(existingPhotosProp ?? [])
   const [submitting, setSubmitting] = useState(false)
 
-  const addTag = () => {
-    const tag = tagInput.trim()
+  const addTag = (value?: string) => {
+    const tag = (value ?? tagInput).trim()
     if (tag && !tags.includes(tag)) {
       setTags([...tags, tag])
     }
     setTagInput('')
+    setShowTagSuggestions(false)
   }
 
   const removeTag = (tag: string) => {
@@ -176,27 +189,60 @@ export function RecipeForm({ initial, existingPhotos: existingPhotosProp, onSubm
       {/* タグ */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">タグ</label>
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={tagInput}
-            onChange={(e) => setTagInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                e.preventDefault()
-                addTag()
-              }
-            }}
-            placeholder="タグを入力"
-            className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-          />
-          <button
-            type="button"
-            onClick={addTag}
-            className="px-3 py-2 bg-gray-100 rounded-lg text-sm hover:bg-gray-200"
-          >
-            <Plus size={16} />
-          </button>
+        <div className="relative">
+          <div className="flex gap-2">
+            <input
+              ref={tagInputRef}
+              type="text"
+              value={tagInput}
+              onChange={(e) => {
+                setTagInput(e.target.value)
+                setShowTagSuggestions(true)
+              }}
+              onFocus={() => setShowTagSuggestions(true)}
+              onBlur={(e) => {
+                if (!suggestionsRef.current?.contains(e.relatedTarget as Node)) {
+                  setShowTagSuggestions(false)
+                }
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  addTag()
+                }
+              }}
+              placeholder="タグを入力 or 選択"
+              className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            />
+            <button
+              type="button"
+              onClick={() => addTag()}
+              className="px-3 py-2 bg-gray-100 rounded-lg text-sm hover:bg-gray-200"
+            >
+              <Plus size={16} />
+            </button>
+          </div>
+          {showTagSuggestions && tagSuggestions.length > 0 && (
+            <div
+              ref={suggestionsRef}
+              className="absolute z-10 left-0 right-12 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-40 overflow-y-auto"
+            >
+              {tagSuggestions.map((tag) => (
+                <button
+                  key={tag}
+                  type="button"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => {
+                    addTag(tag)
+                    tagInputRef.current?.focus()
+                  }}
+                  className="w-full text-left px-3 py-2 text-sm hover:bg-primary-50 text-gray-700"
+                >
+                  #{tag}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
         {tags.length > 0 && (
           <div className="flex flex-wrap gap-1 mt-2">
