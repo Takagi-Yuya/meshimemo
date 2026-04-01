@@ -161,7 +161,7 @@ export function Home({ recipes, loading }: Props) {
           <p className="text-sm text-gray-300">右下の＋ボタンから登録しましょう</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-4">
+        <div className="columns-2 gap-4">
           {filteredRecipes.map((recipe) => (
             <RecipeCard key={recipe.id} recipe={recipe} />
           ))}

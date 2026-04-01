@@ -10,18 +10,46 @@ const GENRE_EMOJI: Record<string, string> = {
   eating_out: '🍽️',
 }
 
+// NOTE: IDからカードサイズを決定的に算出（レンダー間で安定）
+type CardSize = 'tall' | 'medium' | 'short'
+
+function getCardSize(id: string): CardSize {
+  let hash = 0
+  for (let i = 0; i < id.length; i++) {
+    hash = (hash * 31 + id.charCodeAt(i)) | 0
+  }
+  const mod = ((hash % 3) + 3) % 3
+  if (mod === 0) return 'tall'
+  if (mod === 1) return 'short'
+  return 'medium'
+}
+
+const IMAGE_HEIGHT: Record<CardSize, string> = {
+  tall: 'h-48',
+  medium: 'h-32',
+  short: 'h-24',
+}
+
+const PLACEHOLDER_HEIGHT: Record<CardSize, string> = {
+  tall: 'h-48',
+  medium: 'h-32',
+  short: 'h-24',
+}
+
 interface Props {
   recipe: Recipe
 }
 
 export function RecipeCard({ recipe }: Props) {
+  const size = getCardSize(recipe.id)
+
   return (
     <Link
       to={`/recipe/${recipe.id}`}
-      className="group block bg-white/90 backdrop-blur-sm rounded-2xl shadow-card overflow-hidden hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 border border-white/50"
+      className="group block bg-white/90 backdrop-blur-sm rounded-2xl shadow-card overflow-hidden hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 border border-white/50 break-inside-avoid mb-4"
     >
       {recipe.photos.length > 0 ? (
-        <div className="aspect-video bg-gradient-to-br from-peach-100 to-rose-100 overflow-hidden">
+        <div className={`${IMAGE_HEIGHT[size]} bg-gradient-to-br from-peach-100 to-rose-100 overflow-hidden`}>
           <img
             src={recipe.photos[0]}
             alt={recipe.title}
@@ -29,8 +57,8 @@ export function RecipeCard({ recipe }: Props) {
           />
         </div>
       ) : (
-        <div className="aspect-video bg-gradient-to-br from-peach-100 to-rose-100 flex items-center justify-center">
-          <span className="text-3xl opacity-60">{GENRE_EMOJI[recipe.genre] ?? '🍳'}</span>
+        <div className={`${PLACEHOLDER_HEIGHT[size]} bg-gradient-to-br from-peach-100 to-rose-100 flex items-center justify-center`}>
+          <span className={`opacity-60 ${size === 'tall' ? 'text-5xl' : 'text-3xl'}`}>{GENRE_EMOJI[recipe.genre] ?? '🍳'}</span>
         </div>
       )}
       <div className="p-3">
