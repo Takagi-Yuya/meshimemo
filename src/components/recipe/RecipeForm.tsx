@@ -46,13 +46,13 @@ export function RecipeForm({ initial, existingPhotos: existingPhotosProp, allTag
   const [existingPhotos, setExistingPhotos] = useState<string[]>(existingPhotosProp ?? [])
   const [submitting, setSubmitting] = useState(false)
 
-  const addTag = (value?: string) => {
+  const addTag = (value?: string, keepOpen = false) => {
     const tag = (value ?? tagInput).trim()
     if (tag && !tags.includes(tag)) {
       setTags([...tags, tag])
     }
     setTagInput('')
-    setShowTagSuggestions(false)
+    if (!keepOpen) setShowTagSuggestions(false)
   }
 
   const removeTag = (tag: string) => {
@@ -233,7 +233,7 @@ export function RecipeForm({ initial, existingPhotos: existingPhotosProp, allTag
                   type="button"
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={() => {
-                    addTag(tag)
+                    addTag(tag, true)
                     tagInputRef.current?.focus()
                   }}
                   className="w-full text-left px-3 py-2 text-sm hover:bg-primary-50 text-gray-700"
